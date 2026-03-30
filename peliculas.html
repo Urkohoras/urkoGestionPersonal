@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Películas - Mi Gestor Personal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="menu-desplegable">
+            <button class="boton-menu">Menú ▾</button>
+            <div class="contenido-menu">
+                <a href="index.html">Inicio</a>
+                <a href="tareas.html">Mis Tareas</a>
+                <a href="peliculas.html">Películas</a>
+            </div>
+        </nav>
+
+        <h1>Películas Vistas</h1>
+        <p>Tu registro de entretenimiento.</p>
+    </header>
+
+    <main>
+        <section id="entretenimiento">
+            <h2>Añadir nueva película</h2>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <input type="text" id="nueva-pelicula" placeholder="Escribe el título de la película...">
+                <button id="btn-agregar-pelicula" class="btn-principal">Añadir</button>
+            </div>
+            
+            <ul id="lista-peliculas">
+                </ul>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

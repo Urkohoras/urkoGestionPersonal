@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Gestor Personal</title>
+    <title>Mis Tareas - Mi Gestor Personal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,16 +17,23 @@
             </div>
         </nav>
 
-        <h1>Mi Gestor Personal</h1>
-        <p>Tu centro de control minimalista.</p>
+        <h1>Mis Tareas</h1>
+        <p>Gestiona tu día a día.</p>
     </header>
 
     <main>
-        <section class="bienvenida">
-            <h2>Bienvenido</h2>
-            <p>Utiliza el menú superior izquierdo para navegar a tus diferentes espacios.</p>
+        <section id="tareas">
+            <h2>Añadir nueva tarea</h2>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <input type="text" id="nueva-tarea" placeholder="Escribe aquí tu tarea...">
+                <button id="btn-agregar-tarea" class="btn-principal">Añadir</button>
+            </div>
+            
+            <ul id="lista-tareas">
+                </ul>
         </section>
     </main>
 
+    <script src="app.js"></script>
 </body>
 </html>

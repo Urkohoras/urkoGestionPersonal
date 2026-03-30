@@ -1,4 +1,7 @@
-/* Reseteo básico para que se vea igual en todos los navegadores */
+/* 1. Tipografía limpia y elegante */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+/* 2. Reseteo y configuración base */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,65 +9,204 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    font-family: 'Inter', sans-serif;
+    background-color: #0f1115; /* Fondo oscuro mate profundo */
+    color: #e2e8f0; /* Texto gris claro, no cansa la vista */
     line-height: 1.6;
-    padding: 20px;
+    padding: 50px 20px;
+    min-height: 100vh;
 }
 
+/* 3. Cabecera y Menú Desplegable */
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
+    position: relative; /* Clave para posicionar el menú */
+    padding-top: 10px;
 }
 
+h1 {
+    font-weight: 600;
+    color: #ffffff;
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+header p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: 300;
+}
+
+/* --- ESTILOS DEL MENÚ --- */
+.menu-desplegable {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-block;
+}
+
+.boton-menu {
+    background-color: transparent;
+    color: #cbd5e1;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    border: 1px solid #2c323d;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.boton-menu:hover {
+    background-color: #1e222a;
+    color: #ffffff;
+    border-color: #3b4252;
+}
+
+.contenido-menu {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #1e222a;
+    min-width: 180px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid #2c323d;
+    z-index: 10;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.contenido-menu a {
+    color: #94a3b8;
+    padding: 14px 18px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    font-size: 0.95rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.contenido-menu a:hover {
+    background-color: #282d38;
+    color: #ffffff;
+}
+
+.menu-desplegable:hover .contenido-menu {
+    display: block;
+}
+/* ------------------------ */
+
+/* 4. Contenedor y tarjetas de sección */
 main {
-    max-width: 800px;
-    margin: 0 auto; /* Centra el contenido en la pantalla */
+    max-width: 700px;
+    margin: 0 auto;
 }
 
 section {
-    background: #fff;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: #1e222a; /* Gris azulado oscuro */
+    padding: 35px;
+    margin-bottom: 30px;
+    border-radius: 16px;
+    border: 1px solid #2c323d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    text-align: center; /* Centramos el texto de bienvenida */
 }
 
 h2 {
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 5px;
+    font-weight: 500;
+    font-size: 1.4rem;
     margin-bottom: 15px;
+    color: #f8fafc;
 }
 
+section p {
+    color: #94a3b8;
+}
+
+/* 5. Controles (Inputs y Botones) - Mantenidos para las futuras subpáginas */
 input[type="text"] {
-    padding: 10px;
-    width: 70%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 14px 18px;
+    width: 75%;
+    background-color: #0f1115;
+    border: 1px solid #333a45;
+    border-radius: 8px;
+    color: #f8fafc;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    outline: none;
 }
 
-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
+input[type="text"]::placeholder {
+    color: #64748b;
+}
+
+input[type="text"]:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+/* Botón principal (Añadir) */
+.btn-principal {
+    padding: 14px 24px;
+    background-color: #2563eb; 
+    color: #ffffff;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    margin-left: 10px;
+    transition: background-color 0.2s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
+.btn-principal:hover {
+    background-color: #1d4ed8;
 }
 
+/* 6. Listas (Mantenidas para las futuras subpáginas) */
 ul {
     list-style-type: none;
-    margin-top: 15px;
+    margin-top: 25px;
 }
 
 li {
-    background: #eee;
-    margin-bottom: 5px;
-    padding: 10px;
-    border-radius: 4px;
+    background-color: #282d38;
+    margin-bottom: 12px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    text-align: left; /* Alineamos las tareas a la izquierda */
+}
+
+li:hover {
+    transform: translateY(-2px);
+    border-color: #3b4252;
+}
+
+/* Botones de eliminar dentro de la lista */
+li button {
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    color: #ef4444 !important;
+    padding: 8px 12px !important;
+    font-size: 0.9rem !important;
+    border-radius: 6px !important;
+    margin-left: 15px !important;
+    cursor: pointer;
+    transition: all 0.2s ease !important;
+}
+
+li button:hover {
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
 }
