@@ -9,8 +9,8 @@
 <body>
     <header>
         <nav class="menu-desplegable">
-            <button class="boton-menu">Menú ▾</button>
-            <div class="contenido-menu">
+            <button class="boton-menu" id="btn-menu">☰</button>
+            <div class="contenido-menu" id="contenido-menu">
                 <a href="index.html">Inicio</a>
                 <a href="tareas.html">Mis Tareas</a>
                 <a href="peliculas.html">Películas</a>
@@ -23,10 +23,9 @@
 
     <main>
         <section id="entretenimiento">
-            <h2>Añadir nueva película</h2>
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <input type="text" id="nueva-pelicula" placeholder="Escribe el título de la película...">
-                <button id="btn-agregar-pelicula" class="btn-principal">Añadir</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin-bottom: 0; border: none; padding: 0;">Mi Catálogo</h2>
+                <button id="btn-abrir-form-pelicula" class="btn-principal"> + Añadir Película</button>
             </div>
             
             <ul id="lista-peliculas">
@@ -34,6 +33,55 @@
         </section>
     </main>
 
-    <script src="app.js"></script>
+    <div id="modal-pelicula" class="modal-oculto">
+        <div class="contenido-modal">
+            <h3>Nueva Película</h3>
+            
+            <div class="grupo-formulario">
+                <label for="titulo-pelicula">Título de la película *</label>
+                <input type="text" id="titulo-pelicula" placeholder="Ej: El Padrino">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="imagen-pelicula">URL de la Portada (Opcional)</label>
+                <input type="text" id="imagen-pelicula" placeholder="Pega el enlace de la imagen...">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="plataforma-pelicula">Plataforma / Medio</label>
+                <select id="plataforma-pelicula">
+                    <option value="Cine">Cine</option>
+                    <option value="Netflix">Netflix</option>
+                    <option value="HBO Max">HBO Max</option>
+                    <option value="Prime Video">Prime Video</option>
+                    <option value="Disney+">Disney+</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="fecha-pelicula">Fecha de visionado</label>
+                <input type="date" id="fecha-pelicula">
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="nota-pelicula">Valoración</label>
+                <select id="nota-pelicula">
+                    <option value="5">5 Estrellas (¡Obra maestra!)</option>
+                    <option value="4">4 Estrellas (Muy buena)</option>
+                    <option value="3" selected>3 Estrellas (Entretenida)</option>
+                    <option value="2">2 Estrellas (Floja)</option>
+                    <option value="1">1 Estrella (Mala)</option>
+                </select>
+            </div>
+            
+            <div class="acciones-modal">
+                <button id="btn-cancelar-pelicula" class="btn-secundario">Cancelar</button>
+                <button id="btn-guardar-pelicula" class="btn-principal">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>

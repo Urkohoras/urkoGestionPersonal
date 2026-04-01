@@ -9,8 +9,8 @@
 <body>
     <header>
         <nav class="menu-desplegable">
-            <button class="boton-menu">Menú ▾</button>
-            <div class="contenido-menu">
+            <button class="boton-menu" id="btn-menu">☰</button>
+            <div class="contenido-menu" id="contenido-menu">
                 <a href="index.html">Inicio</a>
                 <a href="tareas.html">Mis Tareas</a>
                 <a href="peliculas.html">Películas</a>
@@ -18,15 +18,23 @@
         </nav>
 
         <h1>Mi Gestor Personal</h1>
-        <p>Tu centro de control minimalista.</p>
     </header>
 
     <main>
-        <section class="bienvenida">
-            <h2>Bienvenido</h2>
-            <p>Utiliza el menú superior izquierdo para navegar a tus diferentes espacios.</p>
+        <section id="seccion-calendario">
+            <div class="calendario-header">
+                <button id="mes-anterior">◀</button>
+                <h2 id="mes-anio"></h2>
+                <button id="mes-siguiente">▶</button>
+            </div>
+            <div class="dias-semana">
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+            </div>
+            <div id="dias-calendario" class="dias-calendario">
+                </div>
         </section>
     </main>
 
+    <script type="module" src="app.js"></script>
 </body>
 </html>

@@ -2,16 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 /* 2. Reseteo y configuración base */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #0f1115; /* Fondo oscuro mate profundo */
-    color: #e2e8f0; /* Texto gris claro, no cansa la vista */
+    background-color: #0f1115;
+    color: #e2e8f0;
     line-height: 1.6;
     padding: 50px 20px;
     min-height: 100vh;
@@ -21,25 +17,14 @@ body {
 header {
     text-align: center;
     margin-bottom: 50px;
-    position: relative; /* Clave para posicionar el menú */
+    position: relative;
     padding-top: 10px;
 }
 
-h1 {
-    font-weight: 600;
-    color: #ffffff;
-    font-size: 2.2rem;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-}
+h1 { font-weight: 600; color: #ffffff; font-size: 2.2rem; margin-bottom: 8px; letter-spacing: -0.5px; }
+header p { color: #94a3b8; font-size: 1.1rem; font-weight: 300; }
 
-header p {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    font-weight: 300;
-}
-
-/* --- ESTILOS DEL MENÚ --- */
+/* --- ESTILOS DEL MENÚ ACTUALIZADOS --- */
 .menu-desplegable {
     position: absolute;
     top: 0;
@@ -50,20 +35,16 @@ header p {
 .boton-menu {
     background-color: transparent;
     color: #cbd5e1;
-    padding: 8px 16px;
-    font-size: 0.95rem;
-    border: 1px solid #2c323d;
+    padding: 6px 12px;
+    font-size: 1.8rem; /* Tamaño más grande para las rayitas */
+    border: 1px solid transparent; /* Quitamos el borde para que sea más limpio */
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-family: 'Inter', sans-serif;
+    line-height: 1; /* Para centrar bien el icono */
 }
 
-.boton-menu:hover {
-    background-color: #1e222a;
-    color: #ffffff;
-    border-color: #3b4252;
-}
+.boton-menu:hover { background-color: #1e222a; color: #ffffff; }
 
 .contenido-menu {
     display: none; /* Oculto por defecto */
@@ -73,12 +54,15 @@ header p {
     background-color: #1e222a;
     min-width: 180px;
     border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
     border: 1px solid #2c323d;
     z-index: 10;
     overflow: hidden;
     margin-top: 8px;
 }
+
+/* Esta es la clase que JavaScript añadirá y quitará al hacer clic */
+.contenido-menu.mostrar { display: block; }
 
 .contenido-menu a {
     color: #94a3b8;
@@ -90,123 +74,337 @@ header p {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.contenido-menu a:hover {
-    background-color: #282d38;
-    color: #ffffff;
-}
+.contenido-menu a:hover { background-color: #282d38; color: #ffffff; }
 
-.menu-desplegable:hover .contenido-menu {
-    display: block;
-}
-/* ------------------------ */
-
-/* 4. Contenedor y tarjetas de sección */
-main {
-    max-width: 700px;
-    margin: 0 auto;
-}
+/* 4. Contenedor, Secciones y Calendario */
+main { max-width: 700px; margin: 0 auto; }
 
 section {
-    background-color: #1e222a; /* Gris azulado oscuro */
+    background-color: #1e222a;
     padding: 35px;
     margin-bottom: 30px;
     border-radius: 16px;
     border: 1px solid #2c323d;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    text-align: center; /* Centramos el texto de bienvenida */
+    text-align: center;
 }
 
-h2 {
-    font-weight: 500;
-    font-size: 1.4rem;
+h2 { font-weight: 500; font-size: 1.4rem; margin-bottom: 15px; color: #f8fafc; }
+
+/* --- NUEVO: ESTILOS DEL CALENDARIO --- */
+.calendario-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.calendario-header h2 { margin-bottom: 0; border: none; padding-bottom: 0; }
+
+.calendario-header button {
+    background: none; border: none; color: #94a3b8;
+    font-size: 1.2rem; cursor: pointer; padding: 5px 15px; transition: color 0.2s;
+}
+
+.calendario-header button:hover { color: #ffffff; }
+
+.dias-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    color: #64748b;
+    font-size: 0.9rem;
     margin-bottom: 15px;
-    color: #f8fafc;
+    font-weight: 500;
 }
 
-section p {
-    color: #94a3b8;
+.dias-calendario {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
 }
 
-/* 5. Controles (Inputs y Botones) - Mantenidos para las futuras subpáginas */
+.dia {
+    background-color: #282d38;
+    color: #e2e8f0;
+    padding: 12px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.dia:hover:not(.vacio) {
+    background-color: #3b4252;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.dia.vacio { background-color: transparent; cursor: default; }
+
+.dia.hoy {
+    background-color: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+}
+
+/* 5. Controles (Mantenidos para las subpáginas) */
 input[type="text"] {
-    padding: 14px 18px;
-    width: 75%;
+    padding: 14px 18px; width: 75%; background-color: #0f1115; border: 1px solid #333a45;
+    border-radius: 8px; color: #f8fafc; font-family: 'Inter', sans-serif; font-size: 1rem; outline: none;
+}
+input[type="text"]:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+
+.btn-principal {
+    padding: 14px 24px; background-color: #2563eb; color: #ffffff; border: none;
+    border-radius: 8px; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500;
+    font-size: 1rem; margin-left: 10px; transition: background-color 0.2s ease;
+}
+.btn-principal:hover { background-color: #1d4ed8; }
+
+/* 6. Listas (Mantenidas para las subpáginas) */
+ul { list-style-type: none; margin-top: 25px; }
+li {
+    background-color: #282d38; margin-bottom: 12px; padding: 16px 20px; border-radius: 10px;
+    display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent;
+    transition: transform 0.2s ease, border-color 0.2s ease; text-align: left;
+}
+li:hover { transform: translateY(-2px); border-color: #3b4252; }
+li button {
+    background-color: transparent !important; border: 1px solid transparent !important; color: #ef4444 !important;
+    padding: 8px 12px !important; font-size: 0.9rem !important; border-radius: 6px !important; margin-left: 15px !important;
+    cursor: pointer; transition: all 0.2s ease !important;
+}
+li button:hover { background-color: rgba(239, 68, 68, 0.1) !important; border-color: #ef4444 !important; }
+
+/* =========================================
+   7. VENTANA EMERGENTE (MODAL) Y FORMULARIO
+   ========================================= */
+.modal-oculto {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(15, 17, 21, 0.8); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-oculto.mostrar-modal {
+    display: flex; /* Al añadir esta clase en JS, se muestra centrado */
+}
+
+.contenido-modal {
+    background-color: #1e222a;
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid #2c323d;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 450px;
+}
+
+.contenido-modal h3 {
+    color: #ffffff;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2c323d;
+    padding-bottom: 10px;
+}
+
+.grupo-formulario {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.grupo-formulario label {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+/* Estilizamos el select y el date para que coincidan con tus inputs elegantes */
+select, input[type="date"] {
+    width: 100%;
+    padding: 12px 15px;
     background-color: #0f1115;
     border: 1px solid #333a45;
     border-radius: 8px;
     color: #f8fafc;
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    transition: all 0.2s ease;
     outline: none;
+    transition: all 0.2s ease;
 }
 
-input[type="text"]::placeholder {
-    color: #64748b;
-}
-
-input[type="text"]:focus {
+select:focus, input[type="date"]:focus {
     border-color: #6366f1;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
 }
 
-/* Botón principal (Añadir) */
-.btn-principal {
-    padding: 14px 24px;
-    background-color: #2563eb; 
-    color: #ffffff;
-    border: none;
+.grupo-formulario input[type="text"] {
+    width: 100%;
+}
+
+.acciones-modal {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+.btn-secundario {
+    padding: 10px 18px;
+    background-color: transparent;
+    color: #94a3b8;
+    border: 1px solid #333a45;
     border-radius: 8px;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    margin-left: 10px;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.btn-principal:hover {
-    background-color: #1d4ed8;
+.btn-secundario:hover {
+    background-color: #2c323d;
+    color: #ffffff;
 }
 
-/* 6. Listas (Mantenidas para las futuras subpáginas) */
-ul {
-    list-style-type: none;
-    margin-top: 25px;
-}
-
-li {
-    background-color: #282d38;
-    margin-bottom: 12px;
-    padding: 16px 20px;
-    border-radius: 10px;
+/* =========================================
+   8. NUEVO DISEÑO PARA LA LISTA DE TAREAS
+   ========================================= */
+.info-tarea {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.titulo-tarea {
+    font-weight: 500;
+    color: #f8fafc;
+    font-size: 1.05rem;
+}
+
+.detalles-tarea {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
     align-items: center;
-    border: 1px solid transparent;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-    text-align: left; /* Alineamos las tareas a la izquierda */
 }
 
-li:hover {
-    transform: translateY(-2px);
-    border-color: #3b4252;
+.etiqueta-tipo {
+    background-color: #3b82f6; /* Azul por defecto */
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }
 
-/* Botones de eliminar dentro de la lista */
-li button {
-    background-color: transparent !important;
-    border: 1px solid transparent !important;
-    color: #ef4444 !important;
-    padding: 8px 12px !important;
-    font-size: 0.9rem !important;
-    border-radius: 6px !important;
-    margin-left: 15px !important;
+/* Colores específicos para cada tipo de tarea */
+.tipo-examen { background-color: #ef4444; } /* Rojo */
+.tipo-trabajo { background-color: #f59e0b; } /* Naranja */
+.tipo-deberes { background-color: #10b981; } /* Verde */
+.tipo-personal { background-color: #8b5cf6; } /* Morado */
+
+/* =========================================
+   9. MEJORAS DEL CALENDARIO (TAREAS INTEGRADAS)
+   ========================================= */
+
+/* Modificamos la caja del día para que tenga altura y organice las tareas */
+.dia {
+    background-color: #282d38;
+    color: #e2e8f0;
+    padding: 6px; 
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.2s ease !important;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    min-height: 85px; /* Altura mínima para que quepan las píldoras de tareas */
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    gap: 4px;
 }
 
-li button:hover {
-    background-color: rgba(239, 68, 68, 0.1) !important;
-    border-color: #ef4444 !important;
+/* Cambiamos el estilo de "Hoy" para que no sea azul entero, así las tareas azules se leen bien */
+.dia.hoy {
+    background-color: #1e293b; 
+    color: #ffffff;
+    font-weight: 600;
+    border: 2px solid #2563eb; /* Borde azul brillante en lugar de fondo sólido */
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* Contenedor de las mini-tareas dentro de cada día */
+.calendario-tareas {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+}
+
+/* Píldora de tarea en el calendario */
+.calendario-tarea-dot {
+    font-size: 0.65rem;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: white;
+    text-align: center;
+    white-space: nowrap; /* Evita que el texto baje a otra línea */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone "..." si el texto es muy largo */
+    width: 100%;
+    font-weight: 500;
+}
+
+/* Colores para el calendario (coinciden con la lista de tareas) */
+.dot-examen { background-color: #ef4444; }
+.dot-trabajo { background-color: #f59e0b; }
+.dot-deberes { background-color: #10b981; }
+.dot-personal { background-color: #8b5cf6; }
+.dot-otro { background-color: #3b82f6; }
+.tipo-otro { background-color: #3b82f6; } /* Por si no estaba en la lista grande */
+
+/* =========================================
+   10. ESTILOS PARA LA LISTA DE PELÍCULAS
+   ========================================= */
+.item-pelicula {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.portada-pelicula {
+    width: 65px;
+    height: 95px;
+    object-fit: cover; /* Recorta la imagen para que encaje sin deformarse */
+    border-radius: 6px;
+    background-color: #2c323d; /* Color de fondo si no hay imagen */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.info-pelicula {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.estrellas-pelicula {
+    color: #fbbf24; /* Amarillo dorado */
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+
+.plataforma-badge {
+    background-color: #475569; /* Gris azulado neutro */
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
 }

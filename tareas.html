@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Tareas - Mi Gestor Personal</title>
+    <title>Mis Tareas</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <nav class="menu-desplegable">
-            <button class="boton-menu">Menú ▾</button>
-            <div class="contenido-menu">
+            <button class="boton-menu" id="btn-menu">☰</button>
+            <div class="contenido-menu" id="contenido-menu">
                 <a href="index.html">Inicio</a>
                 <a href="tareas.html">Mis Tareas</a>
                 <a href="peliculas.html">Películas</a>
@@ -18,15 +18,13 @@
         </nav>
 
         <h1>Mis Tareas</h1>
-        <p>Gestiona tu día a día.</p>
     </header>
 
     <main>
         <section id="tareas">
-            <h2>Añadir nueva tarea</h2>
-            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <input type="text" id="nueva-tarea" placeholder="Escribe aquí tu tarea...">
-                <button id="btn-agregar-tarea" class="btn-principal">Añadir</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin-bottom: 0; border: none; padding: 0;">Lista de Tareas</h2>
+                <button id="btn-abrir-formulario" class="btn-principal"> + Añadir Tarea</button>
             </div>
             
             <ul id="lista-tareas">
@@ -34,6 +32,43 @@
         </section>
     </main>
 
-    <script src="app.js"></script>
+    <div id="modal-tarea" class="modal-oculto">
+        <div class="contenido-modal">
+            <h3>Nueva Tarea</h3>
+            
+            <div class="grupo-formulario">
+                <label for="nombre-tarea">Nombre de la tarea *</label>
+                <input type="text" id="nombre-tarea" placeholder="Ej: Estudiar para Física">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="tipo-tarea">Tipo de tarea</label>
+                <select id="tipo-tarea">
+                    <option value="Deberes">Deberes</option>
+                    <option value="Examen">Examen</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="fecha-tarea">Fecha de fin (Opcional)</label>
+                <input type="date" id="fecha-tarea">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="ref-tarea">Asignatura / Referencia (Opcional)</label>
+                <input type="text" id="ref-tarea" placeholder="Ej: Física II / Gimnasio">
+            </div>
+            
+            <div class="acciones-modal">
+                <button id="btn-cancelar-tarea" class="btn-secundario">Cancelar</button>
+                <button id="btn-guardar-tarea" class="btn-principal">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
 </body>
 </html>
