@@ -16,7 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Variables globales para almacenar nuestros datos de la nube
 let tareas = [];
 let peliculas = [];
 
@@ -48,7 +47,7 @@ const btnMesSiguiente = document.getElementById('mes-siguiente');
 let fechaActual = new Date();
 
 function renderizarCalendario() {
-    if (!mesAnio || !diasCalendario) return; // Evita errores si no estamos en el index
+    if (!mesAnio || !diasCalendario) return;
 
     diasCalendario.innerHTML = '';
     const año = fechaActual.getFullYear();
@@ -83,7 +82,6 @@ function renderizarCalendario() {
         const diaStr = String(i).padStart(2, '0');
         const fechaBucle = `${año}-${mesStr}-${diaStr}`;
 
-        // Filtramos las tareas que coincidan con este día
         const tareasDelDia = tareas.filter(t => t.fecha === fechaBucle);
         
         if (tareasDelDia.length > 0) {
@@ -119,36 +117,25 @@ if (btnMesAnterior && btnMesSiguiente) {
 // CONEXIÓN EN TIEMPO REAL CON FIREBASE
 // ==========================================
 
-// 1. Escuchar Tareas
 onSnapshot(collection(db, "tareas"), (snapshot) => {
-    // Convertimos los documentos de Firebase en un array para nuestro JS
     tareas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // Ordenamos las tareas por fecha
     tareas.sort((a, b) => {
         if (!a.fecha) return 1;
         if (!b.fecha) return -1;
         return new Date(a.fecha) - new Date(b.fecha);
     });
-    
-    // Actualizamos la pantalla si estamos en la página correspondiente
     renderizarCalendario();
     if (document.getElementById('lista-tareas')) renderizarTareas();
 });
 
-// 2. Escuchar Películas
 onSnapshot(collection(db, "peliculas"), (snapshot) => {
     peliculas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // Ordenamos las películas por nota (de mayor a menor)
     peliculas.sort((a, b) => parseInt(b.nota) - parseInt(a.nota));
-    
     if (document.getElementById('lista-peliculas')) renderizarPeliculas();
 });
 
-
 // ==========================================
-// LÓGICA DE TAREAS (tareas.html)
+// LÓGICA DE TAREAS
 // ==========================================
 const listaTareas = document.getElementById('lista-tareas');
 const modalTarea = document.getElementById('modal-tarea');
@@ -199,7 +186,6 @@ function renderizarTareas() {
         
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = '❌';
-        // Ahora eliminamos usando el ID único de Firebase
         btnEliminar.onclick = async () => {
             await deleteDoc(doc(db, "tareas", tarea.id));
         };
@@ -222,19 +208,22 @@ if (document.getElementById('btn-abrir-formulario')) {
                 fecha: inputFecha.value,
                 referencia: inputRef.value.trim()
             };
-            // Guardamos directamente en la nube
-            await addDoc(collection(db, "tareas"), nuevaTarea);
-            modalTarea.classList.remove('mostrar-modal');
-            inputNombre.value = ''; inputFecha.value = ''; inputRef.value = '';
+            try {
+                await addDoc(collection(db, "tareas"), nuevaTarea);
+                modalTarea.classList.remove('mostrar-modal');
+                inputNombre.value = ''; inputFecha.value = ''; inputRef.value = '';
+            } catch (e) {
+                console.error("Error al añadir tarea: ", e);
+                alert("Hubo un error al guardar en la base de datos.");
+            }
         } else {
             alert('¡El nombre de la tarea no puede estar vacío!');
         }
     });
 }
 
-
 // ==========================================
-// LÓGICA DE PELÍCULAS (peliculas.html)
+// LÓGICA DE PELÍCULAS
 // ==========================================
 const listaPeliculas = document.getElementById('lista-peliculas');
 const modalPelicula = document.getElementById('modal-pelicula');
@@ -319,9 +308,15 @@ if (document.getElementById('btn-abrir-form-pelicula')) {
                 fecha: inputFechaPelicula.value,
                 nota: inputNota.value
             };
-            await addDoc(collection(db, "peliculas"), nuevaPelicula);
-            modalPelicula.classList.remove('mostrar-modal');
-            inputTitulo.value = ''; inputImagen.value = ''; inputFechaPelicula.value = ''; inputNota.value = '3';
+            try {
+                // CORREGIDO: ahora usa nuevaPelicula correctamente
+                await addDoc(collection(db, "peliculas"), nuevaPelicula);
+                modalPelicula.classList.remove('mostrar-modal');
+                inputTitulo.value = ''; inputImagen.value = ''; inputFechaPelicula.value = ''; inputNota.value = '3';
+            } catch (e) {
+                console.error("Error al añadir película: ", e);
+                alert("Hubo un error al guardar en la base de datos.");
+            }
         } else {
             alert('¡El título de la película no puede estar vacío!');
         }
