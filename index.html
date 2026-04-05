@@ -36,6 +36,42 @@
         </section>
     </main>
 
+    <div id="modal-detalle-dia" class="modal-oculto">
+        <div class="contenido-modal modal-dia-completo">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #2c323d; padding-bottom: 15px; margin-bottom: 15px;">
+                <h3 id="titulo-detalle-dia" style="margin: 0; border: none; padding: 0;">Detalle del Día</h3>
+                <button id="btn-cerrar-detalle-dia" class="boton-cerrar-simple" style="font-size: 1.4rem; padding-bottom: 2px;">✖</button>
+            </div>
+            
+            <div class="contenedor-columnas-dia">
+                <div class="columna-detalle-dia">
+                    <h4>Tareas del Día</h4>
+                    <ul id="lista-tareas-dia" class="lista-tareas-calendario">
+                        </ul>
+                </div>
+                
+                <div class="columna-detalle-dia">
+                    <h4 style="margin-bottom: 10px;">Organización del Día</h4>
+                    
+                    <ul id="lista-organizacion-dia">
+                        </ul>
+                    
+                    <div class="form-organizar-dia">
+                        <div class="fila-horas">
+                            <input type="time" id="hora-inicio-actividad">
+                            <input type="time" id="hora-fin-actividad">
+                        </div>
+                        <div class="fila-titulo">
+                            <input type="text" id="titulo-actividad" placeholder="Ej: Estudiar">
+                            <button id="btn-add-actividad" class="btn-secundario">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>

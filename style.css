@@ -3,11 +3,7 @@
    ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     font-family: 'Inter', sans-serif;
@@ -21,78 +17,23 @@ body {
 /* =========================================
    2. CABECERA Y MENÚ DESPLEGABLE
    ========================================= */
-header {
-    text-align: center;
-    margin-bottom: 50px;
-    position: relative;
-    padding-top: 10px;
-}
-
-h1 {
-    font-weight: 600;
-    color: #ffffff;
-    font-size: 2.2rem;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-}
-
+header { text-align: center; margin-bottom: 50px; position: relative; padding-top: 10px; }
+h1 { font-weight: 600; color: #ffffff; font-size: 2.2rem; margin-bottom: 8px; letter-spacing: -0.5px; }
 header p { color: #94a3b8; font-size: 1.1rem; font-weight: 300; }
 
-.menu-desplegable {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: inline-block;
-}
-
-.boton-menu {
-    background-color: transparent;
-    color: #cbd5e1;
-    padding: 6px 12px;
-    font-size: 1.8rem;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    line-height: 1;
-}
-
+.menu-desplegable { position: absolute; top: 0; left: 0; display: inline-block; }
+.boton-menu { background-color: transparent; color: #cbd5e1; padding: 6px 12px; font-size: 1.8rem; border: 1px solid transparent; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; line-height: 1; }
 .boton-menu:hover { background-color: #1e222a; color: #ffffff; }
 
-.contenido-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #1e222a;
-    min-width: 180px;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    border: 1px solid #2c323d;
-    z-index: 10;
-    overflow: hidden;
-    margin-top: 8px;
-}
-
+.contenido-menu { display: none; position: absolute; top: 100%; left: 0; background-color: #1e222a; min-width: 180px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); border: 1px solid #2c323d; z-index: 10; overflow: hidden; margin-top: 8px; }
 .contenido-menu.mostrar { display: block; }
-
-.contenido-menu a {
-    color: #94a3b8;
-    padding: 14px 18px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-    font-size: 0.95rem;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
+.contenido-menu a { color: #94a3b8; padding: 14px 18px; text-decoration: none; display: block; text-align: left; font-size: 0.95rem; transition: background-color 0.2s ease, color 0.2s ease; }
 .contenido-menu a:hover { background-color: #282d38; color: #ffffff; }
 
 /* =========================================
    3. CONTENEDOR PRINCIPAL Y SECCIONES
    ========================================= */
 main { max-width: 700px; margin: 0 auto; }
-
 section {
     background-color: #1e222a;
     padding: 35px;
@@ -102,42 +43,18 @@ section {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     text-align: center;
 }
-
 h2 { font-weight: 500; font-size: 1.4rem; margin-bottom: 15px; color: #f8fafc; }
 
 /* =========================================
    4. CALENDARIO (Cuadrícula y Tareas)
    ========================================= */
-.calendario-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
+.calendario-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .calendario-header h2 { margin-bottom: 0; border: none; padding-bottom: 0; }
-
-.calendario-header button {
-    background: none; border: none; color: #94a3b8;
-    font-size: 1.2rem; cursor: pointer; padding: 5px 15px; transition: color 0.2s;
-}
-
+.calendario-header button { background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; padding: 5px 15px; transition: color 0.2s; }
 .calendario-header button:hover { color: #ffffff; }
 
-.dias-semana {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Esto crea las 7 columnas */
-    color: #64748b;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-    font-weight: 500;
-}
-
-.dias-calendario {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* Esto crea las 7 columnas */
-    gap: 8px;
-}
+.dias-semana { display: grid; grid-template-columns: repeat(7, 1fr); color: #64748b; font-size: 0.9rem; margin-bottom: 15px; font-weight: 500; }
+.dias-calendario { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 
 .dia {
     background-color: #282d38;
@@ -147,30 +64,22 @@ h2 { font-weight: 500; font-size: 1.4rem; margin-bottom: 15px; color: #f8fafc; }
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-    min-height: 85px; 
+    height: 100px; /* Cambiamos min-height por una altura fija */
+    overflow-y: auto; /* Si hay muchas tareas, se podrá hacer scroll dentro del día */
     display: flex;
     flex-direction: column;
     align-items: center; 
     gap: 4px;
 }
 
-.dia:hover:not(.vacio) {
-    background-color: #3b4252;
-    border-color: #2563eb;
-    transform: translateY(-2px);
-}
+/* Opcional: Hace que la barra de scroll de los días sea más fina y elegante */
+.dia::-webkit-scrollbar { width: 4px; }
+.dia::-webkit-scrollbar-thumb { background-color: #475569; border-radius: 4px; }
 
+.dia:hover:not(.vacio) { background-color: #3b4252; border-color: #2563eb; transform: translateY(-2px); }
 .dia.vacio { background-color: transparent; cursor: default; }
+.dia.hoy { background-color: #1e293b; color: #ffffff; font-weight: 600; border: 2px solid #2563eb; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2); }
 
-.dia.hoy {
-    background-color: #1e293b; 
-    color: #ffffff;
-    font-weight: 600;
-    border: 2px solid #2563eb; 
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
-}
-
-/* Píldoras de tareas dentro del calendario */
 .calendario-tareas { display: flex; flex-direction: column; gap: 3px; width: 100%; }
 .calendario-tarea-dot {
     font-size: 0.65rem; padding: 2px 4px; border-radius: 4px; color: white;
@@ -181,38 +90,22 @@ h2 { font-weight: 500; font-size: 1.4rem; margin-bottom: 15px; color: #f8fafc; }
 /* =========================================
    5. FORMULARIOS Y BOTONES (Inputs, Selects, Modal)
    ========================================= */
-input[type="text"], input[type="date"], select {
+input[type="text"], input[type="date"], input[type="time"], select {
     padding: 12px 15px; width: 100%; background-color: #0f1115; border: 1px solid #333a45;
     border-radius: 8px; color: #f8fafc; font-family: 'Inter', sans-serif; font-size: 1rem; outline: none;
     transition: all 0.2s ease;
 }
-input[type="text"]:focus, input[type="date"]:focus, select:focus {
-    border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-}
+input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus, select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-.btn-principal {
-    padding: 12px 20px; background-color: #2563eb; color: #ffffff; border: none;
-    border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 1rem; transition: background-color 0.2s ease;
-}
+.btn-principal { padding: 12px 20px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; font-size: 1rem; transition: background-color 0.2s ease; }
 .btn-principal:hover { background-color: #1d4ed8; }
-
-.btn-secundario {
-    padding: 12px 20px; background-color: transparent; color: #94a3b8; border: 1px solid #333a45;
-    border-radius: 8px; cursor: pointer; transition: all 0.2s ease;
-}
+.btn-secundario { padding: 12px 20px; background-color: transparent; color: #94a3b8; border: 1px solid #333a45; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; }
 .btn-secundario:hover { background-color: #2c323d; color: #ffffff; }
 
 /* Ventana emergente (Modal) */
-.modal-oculto {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(15, 17, 21, 0.8); backdrop-filter: blur(4px); z-index: 100;
-    justify-content: center; align-items: center;
-}
+.modal-oculto { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(15, 17, 21, 0.8); backdrop-filter: blur(4px); z-index: 100; justify-content: center; align-items: center; }
 .modal-oculto.mostrar-modal { display: flex; }
-.contenido-modal {
-    background-color: #1e222a; padding: 30px; border-radius: 16px; border: 1px solid #2c323d;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); width: 90%; max-width: 450px; text-align: left;
-}
+.contenido-modal { background-color: #1e222a; padding: 30px; border-radius: 16px; border: 1px solid #2c323d; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); width: 90%; max-width: 450px; text-align: left; }
 .contenido-modal h3 { color: #ffffff; font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid #2c323d; padding-bottom: 10px; }
 .grupo-formulario { margin-bottom: 15px; }
 .grupo-formulario label { display: block; color: #94a3b8; margin-bottom: 5px; font-size: 0.9rem; }
@@ -225,13 +118,10 @@ ul { list-style-type: none; margin-top: 25px; }
 li {
     background-color: #282d38; margin-bottom: 12px; padding: 16px 20px; border-radius: 10px;
     display: flex; justify-content: space-between; align-items: center; border: 1px solid transparent;
-    transition: transform 0.2s ease, border-color 0.2s ease; text-align: left;
+    transition: transform 0.2s ease, border-color 0.2s ease; text-align: left; cursor: pointer;
 }
 li:hover { transform: translateY(-2px); border-color: #3b4252; }
-li button {
-    background-color: transparent; border: 1px solid transparent; color: #ef4444;
-    padding: 8px 12px; font-size: 0.9rem; border-radius: 6px; margin-left: 15px; cursor: pointer; transition: all 0.2s ease;
-}
+li button { background-color: transparent; border: 1px solid transparent; color: #ef4444; padding: 8px 12px; font-size: 0.9rem; border-radius: 6px; margin-left: 15px; cursor: pointer; transition: all 0.2s ease; }
 li button:hover { background-color: rgba(239, 68, 68, 0.1); border-color: #ef4444; }
 
 .info-tarea { display: flex; flex-direction: column; gap: 6px; }
@@ -247,29 +137,50 @@ li button:hover { background-color: rgba(239, 68, 68, 0.1); border-color: #ef444
 .tipo-otro, .dot-otro { background-color: #3b82f6; }
 
 /* =========================================
-   7. LISTA DE PELÍCULAS
+   7. LISTAS DE ENTRETENIMIENTO (Películas y Música)
    ========================================= */
-.item-pelicula { display: flex; gap: 15px; align-items: center; }
-.portada-pelicula {
+.item-entretenimiento { display: flex; gap: 15px; align-items: center; }
+.portada-portada {
     width: 65px; height: 95px; object-fit: cover; border-radius: 6px;
     background-color: #2c323d; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
-.info-pelicula { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
-.estrellas-pelicula { color: #fbbf24; font-size: 1.1rem; letter-spacing: 2px; }
-.plataforma-badge {
-    background-color: #475569; color: white; padding: 3px 10px;
-    border-radius: 12px; font-size: 0.75rem; font-weight: 600;
-}
+.info-entretenimiento { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
+.estrellas-valoracion { color: #fbbf24; font-size: 1.1rem; letter-spacing: 2px; }
+.platforma-musica-badge { background-color: #475569; color: white; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+.musica-badge-color { background-color: #8b5cf6; } /* Color morado para música */
 
 /* =========================================
-   8. LISTA DE MÚSICA Y MEJORAS DE INTERACCIÓN
+   8. NUEVO DISEÑO: DETALLE DEL DÍA COMPLETO
    ========================================= */
-/* Hacemos que toda la lista parezca clickeable */
-li { cursor: pointer; } 
+.modal-dia-completo { max-width: 750px; width: 95%; height: 90vh; display: flex; flex-direction: column; padding: 25px; }
+.contenedor-columnas-dia { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex-grow: 1; overflow: hidden; margin-top: 15px; }
+.columna-detalle-dia { display: flex; flex-direction: column; border: 1px solid #2c323d; border-radius: 10px; padding: 15px; background-color: #161a20; overflow: hidden; }
+.columna-detalle-dia h4 { color: #ffffff; font-size: 1.1rem; border-bottom: 1px solid #2c323d; padding-bottom: 8px; margin-bottom: 10px; font-weight: 500; }
+.columna-detalle-dia ul { margin-top: 0; overflow-y: auto; flex-grow: 1; padding-right: 5px; }
 
-.item-musica { flex-grow: 1; display: flex; flex-direction: column; gap: 6px; }
-.artista-badge {
-    background-color: #8b5cf6; /* Color morado para diferenciar del cine */
-    color: white; padding: 3px 10px;
-    border-radius: 12px; font-size: 0.75rem; font-weight: 600;
-}
+/* Lista de organización diaria */
+.organizacion-item { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #282d38; padding: 10px 5px; }
+.organizacion-item.ultimo { border-bottom: none; }
+.organizacion-checkbox { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 2px solid #333a45; border-radius: 4px; background-color: #0f1115; cursor: pointer; transition: all 0.2s; position: relative; margin-top: 1px; }
+.organizacion-checkbox:checked { background-color: #2563eb; border-color: #2563eb; }
+.organizacion-checkbox:checked::after { content: '✔'; position: absolute; color: white; font-size: 12px; top: -1px; left: 2px; font-weight: bold; }
+.organizacion-info { flex-grow: 1; display: flex; flex-direction: column; }
+.organizacion-horas { font-size: 0.75rem; color: #64748b; font-weight: 500; }
+.organizacion-titulo { font-size: 0.95rem; color: #f8fafc; }
+
+/* Estilo para actividad tachada */
+.organizacion-item.completada .organizacion-titulo, 
+.organizacion-item.completada .organizacion-horas { text-decoration: line-through; opacity: 0.6; }
+
+/* Botón cerrar simple */
+.boton-cerrar-simple { background: none; border: none; color: #ef4444; font-size: 1.1rem; cursor: pointer; opacity: 0.8; }
+.boton-cerrar-simple:hover { opacity: 1; }
+
+/* Formulario organización del día (Reparado para espacio en dos filas) */
+.form-organizar-dia { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #2c323d; }
+.form-organizar-dia input, .form-organizar-dia button { height: 40px; padding: 10px 8px !important; font-size: 0.85rem !important; }
+.fila-horas { display: flex; gap: 8px; }
+.fila-horas input[type="time"] { flex: 1; padding: 10px 5px !important; text-align: center; }
+.fila-titulo { display: flex; gap: 8px; }
+.fila-titulo input[type="text"] { flex: 1; }
+.fila-titulo button { width: 45px; padding: 0 !important; font-size: 1.3rem !important; font-weight: bold; }

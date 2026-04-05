@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Música - Mi Gestor Personal</title>
+    <title>Música</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,14 +19,13 @@
         </nav>
 
         <h1>Proyectos Musicales</h1>
-        <p>Tu biblioteca de escuchas.</p>
     </header>
 
     <main>
         <section id="entretenimiento">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 style="margin-bottom: 0; border: none; padding: 0;">Mis Escuchas</h2>
-                <button id="btn-abrir-form-musica" class="btn-principal"> + Añadir Disco</button>
+                <button id="btn-abrir-form-musica" class="btn-principal"> + Añadir Proyecto</button>
             </div>
             
             <ul id="lista-musica">
@@ -39,13 +38,18 @@
             <h3>Nuevo Proyecto</h3>
             
             <div class="grupo-formulario">
-                <label for="titulo-musica">Título (Álbum / EP / Canción) *</label>
+                <label for="titulo-musica">Título *</label>
                 <input type="text" id="titulo-musica" placeholder="Ej: Dark Side of the Moon">
             </div>
             
             <div class="grupo-formulario">
                 <label for="artista-musica">Artista *</label>
                 <input type="text" id="artista-musica" placeholder="Ej: Pink Floyd">
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="imagen-musica">URL de la portada</label>
+                <input type="text" id="imagen-musica" placeholder="Ej: https://.../portada.jpg">
             </div>
             
             <div class="grupo-formulario">
