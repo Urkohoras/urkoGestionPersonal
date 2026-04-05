@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música - Mi Gestor Personal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav class="menu-desplegable">
+            <button class="boton-menu" id="btn-menu">☰</button>
+            <div class="contenido-menu" id="contenido-menu">
+                <a href="index.html">Inicio</a>
+                <a href="tareas.html">Tareas</a>
+                <a href="peliculas.html">Películas</a>
+                <a href="musica.html">Música</a>
+            </div>
+        </nav>
+
+        <h1>Proyectos Musicales</h1>
+        <p>Tu biblioteca de escuchas.</p>
+    </header>
+
+    <main>
+        <section id="entretenimiento">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin-bottom: 0; border: none; padding: 0;">Mis Escuchas</h2>
+                <button id="btn-abrir-form-musica" class="btn-principal"> + Añadir Disco</button>
+            </div>
+            
+            <ul id="lista-musica">
+                </ul>
+        </section>
+    </main>
+
+    <div id="modal-musica" class="modal-oculto">
+        <div class="contenido-modal">
+            <h3>Nuevo Proyecto</h3>
+            
+            <div class="grupo-formulario">
+                <label for="titulo-musica">Título (Álbum / EP / Canción) *</label>
+                <input type="text" id="titulo-musica" placeholder="Ej: Dark Side of the Moon">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="artista-musica">Artista *</label>
+                <input type="text" id="artista-musica" placeholder="Ej: Pink Floyd">
+            </div>
+            
+            <div class="grupo-formulario">
+                <label for="fecha-musica">Fecha de escucha</label>
+                <input type="date" id="fecha-musica">
+            </div>
+
+            <div class="grupo-formulario">
+                <label for="nota-musica">Valoración</label>
+                <select id="nota-musica">
+                    <option value="5">5 Estrellas</option>
+                    <option value="4">4 Estrellas</option>
+                    <option value="3" selected>3 Estrellas</option>
+                    <option value="2">2 Estrellas</option>
+                    <option value="1">1 Estrella</option>
+                </select>
+            </div>
+            
+            <div class="acciones-modal">
+                <button id="btn-cancelar-musica" class="btn-secundario">Cancelar</button>
+                <button id="btn-guardar-musica" class="btn-principal">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
