@@ -159,8 +159,8 @@ li button:hover { background-color: rgba(239, 68, 68, 0.1); border-color: #ef444
 .columna-detalle-dia ul { margin-top: 0; overflow-y: auto; flex-grow: 1; padding-right: 5px; }
 
 /* Lista de organización diaria */
-.organizacion-item { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #282d38; padding: 10px 5px; }
-.organizacion-item.ultimo { border-bottom: none; }
+/* --- NUEVO CÓDIGO REPARADO --- */
+.organizacion-item { display: flex; align-items: center; gap: 10px; padding: 10px 5px; margin-bottom: 5px; } /* Sin borde y con un poco de margen */
 .organizacion-checkbox { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; border: 2px solid #333a45; border-radius: 4px; background-color: #0f1115; cursor: pointer; transition: all 0.2s; position: relative; margin-top: 1px; }
 .organizacion-checkbox:checked { background-color: #2563eb; border-color: #2563eb; }
 .organizacion-checkbox:checked::after { content: '✔'; position: absolute; color: white; font-size: 12px; top: -1px; left: 2px; font-weight: bold; }

@@ -171,7 +171,6 @@ function renderizarActividadesDia(actividades) {
         checkbox.type = 'checkbox';
         checkbox.classList.add('organizacion-checkbox');
         checkbox.checked = actividad.completada;
-        // Evento de actualización de estado
         checkbox.onchange = async () => {
             const actRef = doc(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades", actividad.id);
             await updateDoc(actRef, { completada: checkbox.checked });
@@ -186,6 +185,21 @@ function renderizarActividadesDia(actividades) {
             <span class="organizacion-titulo">${actividad.titulo}</span>
         `;
         li.appendChild(infoDiv);
+
+        // --- NUEVO: BOTÓN DE ELIMINAR ACTIVIDAD ---
+        const btnEliminarActividad = document.createElement('button');
+        btnEliminarActividad.textContent = '❌';
+        btnEliminarActividad.classList.add('boton-cerrar-simple'); // Reutilizamos estilo
+        btnEliminarActividad.style.marginLeft = 'auto'; // Lo empujamos a la derecha
+        btnEliminarActividad.style.fontSize = '0.9rem';
+        
+        btnEliminarActividad.onclick = async (e) => {
+            e.stopPropagation(); // Evita que se abra el modal de editar
+            const actRef = doc(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades", actividad.id);
+            await deleteDoc(actRef); // Borramos el documento de la subcolección
+        };
+        li.appendChild(btnEliminarActividad);
+        // ----------------------------------------
 
         listaOrganizacionDia.appendChild(li);
     });
