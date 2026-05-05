@@ -1,8 +1,9 @@
 // ==========================================
-// CONFIGURACIÓN DE FIREBASE
+// 1. CONFIGURACIÓN DE FIREBASE Y AUTHENTICATION
 // ==========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDCD1HXfRR7nIzF1jXo9Fsmbr7Rq2VcXPY",
@@ -15,14 +16,96 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-// Variables globales actualizadas en tiempo real
+// Variables globales de datos
 let tareas = [];
 let peliculas = [];
 let musica = [];
 
+// Identificador único del usuario activo
+let currentUserUid = null; 
+
 // ==========================================
-// MENÚ DESPLEGABLE GLOBAL
+// 2. LÓGICA DE LOGIN Y RUTAS PROTEGIDAS
+// ==========================================
+const btnLogin = document.getElementById('btn-login');
+
+if (btnLogin) {
+    btnLogin.addEventListener('click', async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("Error de autenticación:", error);
+            alert("No se pudo iniciar sesión.");
+        }
+    });
+}
+
+onAuthStateChanged(auth, (user) => {
+    const paginaActual = window.location.pathname;
+    const esPaginaLogin = paginaActual.endsWith('login.html');
+
+    if (user) {
+        currentUserUid = user.uid; // Almacenamos el ID para usarlo en las rutas
+        if (esPaginaLogin) {
+            window.location.href = "index.html";
+        } else {
+            iniciarBaseDeDatos();
+            crearBotonCerrarSesion();
+        }
+    } else {
+        currentUserUid = null;
+        if (!esPaginaLogin) {
+            window.location.href = "login.html";
+        }
+    }
+});
+
+function crearBotonCerrarSesion() {
+    const contenidoMenu = document.getElementById('contenido-menu');
+    if (contenidoMenu && !document.getElementById('btn-logout')) {
+        const btnLogout = document.createElement('a');
+        btnLogout.href = "#";
+        btnLogout.id = "btn-logout";
+        btnLogout.textContent = "Cerrar Sesión";
+        btnLogout.style.color = "#ef4444";
+        btnLogout.addEventListener('click', (e) => {
+            e.preventDefault();
+            signOut(auth);
+        });
+        contenidoMenu.appendChild(btnLogout);
+    }
+}
+
+// ==========================================
+// 3. CONEXIÓN SEGURA EN TIEMPO REAL (Rutas actualizadas)
+// ==========================================
+function iniciarBaseDeDatos() {
+    // Rutas apuntan a la subcolección del usuario específico
+    onSnapshot(collection(db, `usuarios/${currentUserUid}/tareas`), (snapshot) => {
+        tareas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        tareas.sort((a, b) => { if (!a.fecha) return 1; if (!b.fecha) return -1; return new Date(a.fecha) - new Date(b.fecha); });
+        if (typeof renderizarCalendario === 'function') renderizarCalendario();
+        if (document.getElementById('lista-tareas')) renderizarTareas();
+    });
+
+    onSnapshot(collection(db, `usuarios/${currentUserUid}/peliculas`), (snapshot) => {
+        peliculas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        peliculas.sort((a, b) => parseInt(b.nota) - parseInt(a.nota));
+        if (document.getElementById('lista-peliculas')) renderizarPeliculas();
+    });
+
+    onSnapshot(collection(db, `usuarios/${currentUserUid}/musica`), (snapshot) => {
+        musica = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        musica.sort((a, b) => parseInt(b.nota) - parseInt(a.nota));
+        if (document.getElementById('lista-musica')) renderizarMusica();
+    });
+}
+
+// ==========================================
+// 4. MENÚ DESPLEGABLE GLOBAL
 // ==========================================
 const btnMenu = document.getElementById('btn-menu');
 const contenidoMenu = document.getElementById('contenido-menu');
@@ -33,7 +116,7 @@ if (btnMenu && contenidoMenu) {
 }
 
 // ==========================================
-// LÓGICA DEL CALENDARIO Y DETALLE DEL DÍA
+// 5. LÓGICA DEL CALENDARIO Y DETALLE DEL DÍA
 // ==========================================
 const mesAnio = document.getElementById('mes-anio');
 const diasCalendario = document.getElementById('dias-calendario');
@@ -41,7 +124,6 @@ const btnMesAnterior = document.getElementById('mes-anterior');
 const btnMesSiguiente = document.getElementById('mes-siguiente');
 let fechaActual = new Date();
 
-// Variables para el modal de Detalle del Día
 const modalDetalleDia = document.getElementById('modal-detalle-dia');
 const tituloDetalleDia = document.getElementById('titulo-detalle-dia');
 const listaTareasDia = document.getElementById('lista-tareas-dia');
@@ -51,10 +133,9 @@ const inputHoraFin = document.getElementById('hora-fin-actividad');
 const inputTituloActividad = document.getElementById('titulo-actividad');
 const btnAddActividad = document.getElementById('btn-add-actividad');
 
-let fechaSeleccionadaStr = null; // Guardará la fecha clickeada (AAAA-MM-DD)
-let unsuscribeOrganizacion = null; // Para limpiar el escuchador de subcolección
+let fechaSeleccionadaStr = null; 
+let unsuscribeOrganizacion = null; 
 
-// Función para renderizar el calendario (con clics activados)
 function renderizarCalendario() {
     if (!mesAnio || !diasCalendario) return;
     diasCalendario.innerHTML = '';
@@ -78,13 +159,11 @@ function renderizarCalendario() {
         const divDia = document.createElement('div');
         divDia.classList.add('dia');
         
-        // --- NUEVO: GESTIÓN DEL CLIC EN EL DÍA ---
         const mesStr = String(mes + 1).padStart(2, '0');
         const diaStr = String(i).padStart(2, '0');
         const fechaBucle = `${año}-${mesStr}-${diaStr}`;
 
         divDia.onclick = () => abrirDetalleDia(fechaBucle, i, meses[mes]);
-        // ----------------------------------------
 
         const spanNumero = document.createElement('span');
         spanNumero.textContent = i;
@@ -110,23 +189,18 @@ function renderizarCalendario() {
     }
 }
 
-// Función para abrir el modal gigante de detalle del día
 function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
     if (!modalDetalleDia) return;
-    fechaSeleccionadaStr = fechaString; // Guardamos la fecha actual en la variable global
+    fechaSeleccionadaStr = fechaString; 
     
-    // Título formateado
-    tituloDetalleDia.textContent = `Día Detallado:`;
+    tituloDetalleDia.textContent = `Detalle del Día: ${numeroDia} de ${nombreMes}, ${fechaActual.getFullYear()}`;
     
-    // 1. Cargar y filtrar tareas
     listaTareasDia.innerHTML = '';
     const tareasDelDia = tareas.filter(t => t.fecha === fechaString);
     if (tareasDelDia.length > 0) {
         tareasDelDia.forEach(tarea => {
             const li = document.createElement('li');
-            li.style.cursor = 'default';
-            li.style.margin = '5px 0';
-            li.style.padding = '8px 12px';
+            li.style.cursor = 'default'; li.style.margin = '5px 0'; li.style.padding = '8px 12px';
             li.innerHTML = `<span class="titulo-tarea" style="font-size: 0.9rem;">${tarea.nombre}</span> <span class="etiqueta-tipo tipo-${tarea.tipo.toLowerCase()}">${tarea.tipo}</span>`;
             listaTareasDia.appendChild(li);
         });
@@ -134,15 +208,13 @@ function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
         listaTareasDia.innerHTML = '<p style="color: #64748b; font-size: 0.9rem; text-align: center;">No hay tareas para hoy.</p>';
     }
     
-    // 2. Cargar Organización Diaria (Escuchador en tiempo real de subcolección)
-    if (unsuscribeOrganizacion) unsuscribeOrganizacion(); // Limpiamos escuchadores antiguos
+    if (unsuscribeOrganizacion) unsuscribeOrganizacion(); 
 
-    // Estructura: organizacionesDiarias -> [AAAA-MM-DD] -> actividades -> [documentos]
-    const actividadesRef = collection(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades");
+    // Ruta actualizada a subcolección de usuario
+    const actividadesRef = collection(db, `usuarios/${currentUserUid}/organizacionesDiarias`, fechaSeleccionadaStr, "actividades");
     
     unsuscribeOrganizacion = onSnapshot(actividadesRef, (snapshot) => {
         let actividadesArr = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Ordenamos por hora de inicio
         actividadesArr.sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
         renderizarActividadesDia(actividadesArr);
     });
@@ -150,7 +222,6 @@ function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
     modalDetalleDia.classList.add('mostrar-modal');
 }
 
-// Función para renderizar la lista de actividades organizadas (con checkboxes)
 function renderizarActividadesDia(actividades) {
     listaOrganizacionDia.innerHTML = '';
     if (actividades.length === 0) {
@@ -164,48 +235,40 @@ function renderizarActividadesDia(actividades) {
         li.style.cursor = 'default'; li.style.padding = '0'; li.style.background = 'none';
         
         if(actividad.completada) li.classList.add('completada');
-        if(index === actividades.length - 1) li.classList.add('ultimo');
 
-        // Checkbox para tachar
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.classList.add('organizacion-checkbox');
         checkbox.checked = actividad.completada;
         checkbox.onchange = async () => {
-            const actRef = doc(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades", actividad.id);
+            // Ruta actualizada
+            const actRef = doc(db, `usuarios/${currentUserUid}/organizacionesDiarias/${fechaSeleccionadaStr}/actividades`, actividad.id);
             await updateDoc(actRef, { completada: checkbox.checked });
         };
         li.appendChild(checkbox);
 
-        // Información de la actividad (Horas y título)
         const infoDiv = document.createElement('div');
         infoDiv.classList.add('organizacion-info');
-        infoDiv.innerHTML = `
-            <span class="organizacion-horas">${actividad.horaInicio} - ${actividad.horaFin}</span>
-            <span class="organizacion-titulo">${actividad.titulo}</span>
-        `;
+        infoDiv.innerHTML = `<span class="organizacion-horas">${actividad.horaInicio} - ${actividad.horaFin}</span><span class="organizacion-titulo">${actividad.titulo}</span>`;
         li.appendChild(infoDiv);
 
-        // --- NUEVO: BOTÓN DE ELIMINAR ACTIVIDAD ---
         const btnEliminarActividad = document.createElement('button');
         btnEliminarActividad.textContent = '❌';
-        btnEliminarActividad.classList.add('boton-cerrar-simple'); // Reutilizamos estilo
-        btnEliminarActividad.style.marginLeft = 'auto'; // Lo empujamos a la derecha
+        btnEliminarActividad.classList.add('boton-cerrar-simple'); 
+        btnEliminarActividad.style.marginLeft = 'auto'; 
         btnEliminarActividad.style.fontSize = '0.9rem';
-        
         btnEliminarActividad.onclick = async (e) => {
-            e.stopPropagation(); // Evita que se abra el modal de editar
-            const actRef = doc(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades", actividad.id);
-            await deleteDoc(actRef); // Borramos el documento de la subcolección
+            e.stopPropagation(); 
+            // Ruta actualizada
+            const actRef = doc(db, `usuarios/${currentUserUid}/organizacionesDiarias/${fechaSeleccionadaStr}/actividades`, actividad.id);
+            await deleteDoc(actRef); 
         };
         li.appendChild(btnEliminarActividad);
-        // ----------------------------------------
 
         listaOrganizacionDia.appendChild(li);
     });
 }
 
-// Guardar nueva actividad en la organización diaria
 if (btnAddActividad) {
     btnAddActividad.addEventListener('click', async () => {
         const titulo = inputTituloActividad.value.trim();
@@ -215,50 +278,26 @@ if (btnAddActividad) {
         if (titulo && inicio && fin && fechaSeleccionadaStr) {
             const nuevaActividad = { titulo: titulo, horaInicio: inicio, horaFin: fin, completada: false };
             try {
-                // Guardamos en la subcolección correspondiente a la fecha
-                const actividadesRef = collection(db, "organizacionesDiarias", fechaSeleccionadaStr, "actividades");
+                // Ruta actualizada
+                const actividadesRef = collection(db, `usuarios/${currentUserUid}/organizacionesDiarias`, fechaSeleccionadaStr, "actividades");
                 await addDoc(actividadesRef, nuevaActividad);
-                // Limpiar campos
                 inputTituloActividad.value = ''; inputHoraInicio.value = ''; inputHoraFin.value = '';
             } catch (e) { console.error(e); alert("Error al guardar actividad."); }
         } else { alert('¡Título, inicio y fin son obligatorios!'); }
     });
 }
 
-// Botones de mes anterior/siguiente y cerrar detalle
 if (btnMesAnterior && btnMesSiguiente) {
     btnMesAnterior.addEventListener('click', () => { fechaActual.setMonth(fechaActual.getMonth() - 1); renderizarCalendario(); });
     btnMesSiguiente.addEventListener('click', () => { fechaActual.setMonth(fechaActual.getMonth() + 1); renderizarCalendario(); });
     document.getElementById('btn-cerrar-detalle-dia').addEventListener('click', () => {
         modalDetalleDia.classList.remove('mostrar-modal');
-        if (unsuscribeOrganizacion) unsuscribeOrganizacion(); // Parar escuchador al cerrar
+        if (unsuscribeOrganizacion) unsuscribeOrganizacion(); 
     });
 }
 
 // ==========================================
-// CONEXIÓN EN TIEMPO REAL CON FIREBASE
-// ==========================================
-onSnapshot(collection(db, "tareas"), (snapshot) => {
-    tareas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    tareas.sort((a, b) => { if (!a.fecha) return 1; if (!b.fecha) return -1; return new Date(a.fecha) - new Date(b.fecha); });
-    renderizarCalendario();
-    if (document.getElementById('lista-tareas')) renderizarTareas();
-});
-
-onSnapshot(collection(db, "peliculas"), (snapshot) => {
-    peliculas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    peliculas.sort((a, b) => parseInt(b.nota) - parseInt(a.nota));
-    if (document.getElementById('lista-peliculas')) renderizarPeliculas();
-});
-
-onSnapshot(collection(db, "musica"), (snapshot) => {
-    musica = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    musica.sort((a, b) => parseInt(b.nota) - parseInt(a.nota));
-    if (document.getElementById('lista-musica')) renderizarMusica();
-});
-
-// ==========================================
-// LÓGICA DE TAREAS (EDICIÓN INCLUIDA)
+// 6. LÓGICA DE TAREAS (Rutas actualizadas)
 // ==========================================
 const listaTareas = document.getElementById('lista-tareas');
 const modalTarea = document.getElementById('modal-tarea');
@@ -293,7 +332,7 @@ function renderizarTareas() {
         li.appendChild(infoDiv);
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = '❌';
-        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, "tareas", tarea.id)); };
+        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, `usuarios/${currentUserUid}/tareas`, tarea.id)); };
         li.appendChild(btnEliminar);
         listaTareas.appendChild(li);
     });
@@ -307,8 +346,8 @@ if (document.getElementById('btn-abrir-formulario')) {
         if (nombre !== '') {
             const datosTarea = { nombre: nombre, tipo: inputTipo.value, fecha: inputFecha.value, referencia: inputRef.value.trim() };
             try {
-                if (idEdicionTarea) { await updateDoc(doc(db, "tareas", idEdicionTarea), datosTarea); } 
-                else { await addDoc(collection(db, "tareas"), datosTarea); }
+                if (idEdicionTarea) { await updateDoc(doc(db, `usuarios/${currentUserUid}/tareas`, idEdicionTarea), datosTarea); } 
+                else { await addDoc(collection(db, `usuarios/${currentUserUid}/tareas`), datosTarea); }
                 cerrarModalTarea();
             } catch (e) { console.error(e); }
         } else { alert('¡El nombre no puede estar vacío!'); }
@@ -316,7 +355,7 @@ if (document.getElementById('btn-abrir-formulario')) {
 }
 
 // ==========================================
-// LÓGICA DE PELÍCULAS (EDICIÓN INCLUIDA)
+// 7. LÓGICA DE PELÍCULAS (Rutas actualizadas)
 // ==========================================
 const listaPeliculas = document.getElementById('lista-peliculas');
 const modalPelicula = document.getElementById('modal-pelicula');
@@ -359,7 +398,7 @@ function renderizarPeliculas() {
         li.appendChild(contenedorPrincipal);
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = '❌';
-        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, "peliculas", pelicula.id)); };
+        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, `usuarios/${currentUserUid}/peliculas`, pelicula.id)); };
         li.appendChild(btnEliminar);
         listaPeliculas.appendChild(li);
     });
@@ -373,8 +412,8 @@ if (document.getElementById('btn-abrir-form-pelicula')) {
         if (titulo !== '') {
             const datosPeli = { titulo: titulo, imagen: inputImagen.value.trim(), plataforma: inputPlataforma.value, fecha: inputFechaPelicula.value, nota: inputNota.value };
             try {
-                if (idEdicionPelicula) { await updateDoc(doc(db, "peliculas", idEdicionPelicula), datosPeli); } 
-                else { await addDoc(collection(db, "peliculas"), datosPeli); }
+                if (idEdicionPelicula) { await updateDoc(doc(db, `usuarios/${currentUserUid}/peliculas`, idEdicionPelicula), datosPeli); } 
+                else { await addDoc(collection(db, `usuarios/${currentUserUid}/peliculas`), datosPeli); }
                 cerrarModalPelicula();
             } catch (e) { console.error(e); }
         } else { alert('¡El título no puede estar vacío!'); }
@@ -382,13 +421,13 @@ if (document.getElementById('btn-abrir-form-pelicula')) {
 }
 
 // ==========================================
-// LÓGICA DE MÚSICA (EDICIÓN Y PORTADA INCLUIDA)
+// 8. LÓGICA DE MÚSICA (Rutas actualizadas)
 // ==========================================
 const listaMusica = document.getElementById('lista-musica');
 const modalMusica = document.getElementById('modal-musica');
 const inputTituloMusica = document.getElementById('titulo-musica');
 const inputArtistaMusica = document.getElementById('artista-musica');
-const inputImagenMusica = document.getElementById('imagen-musica'); // Nuevo campo de portada
+const inputImagenMusica = document.getElementById('imagen-musica');
 const inputFechaMusica = document.getElementById('fecha-musica');
 const inputNotaMusica = document.getElementById('nota-musica');
 let idEdicionMusica = null;
@@ -409,21 +448,19 @@ function renderizarMusica() {
         });
         
         const contenedorPrincipal = document.createElement('div');
-        contenedorPrincipal.classList.add('item-entretenimiento'); // Usamos la clase compartida
+        contenedorPrincipal.classList.add('item-entretenimiento'); 
         
-        // --- NUEVO: RENDERIZADO DE LA PORTADA DE MÚSICA ---
         const img = document.createElement('img');
-        img.classList.add('portada-portada'); // Usamos la clase compartida
+        img.classList.add('portada-portada'); 
         img.src = item.imagen ? item.imagen : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="65" height="95" style="background:%232c323d"></svg>';
         contenedorPrincipal.appendChild(img);
-        // -------------------------------------------------
 
         const infoDiv = document.createElement('div');
-        infoDiv.classList.add('info-entretenimiento'); // Clase compartida
+        infoDiv.classList.add('info-entretenimiento'); 
         infoDiv.innerHTML = `<span class="titulo-tarea">${item.titulo}</span><span class="estrellas-valoracion">${'⭐'.repeat(parseInt(item.nota))}</span>`;
         const detallesDiv = document.createElement('div');
         detallesDiv.classList.add('detalles-tarea');
-        if (item.artista) detallesDiv.innerHTML += `<span class="platforma-musica-badge musica-badge-color">${item.artista}</span>`; // Morado
+        if (item.artista) detallesDiv.innerHTML += `<span class="platforma-musica-badge musica-badge-color">${item.artista}</span>`;
         if (item.fecha) detallesDiv.innerHTML += `<span>📅 ${new Date(item.fecha).toLocaleDateString('es-ES')}</span>`;
         infoDiv.appendChild(detallesDiv);
         contenedorPrincipal.appendChild(infoDiv);
@@ -431,7 +468,7 @@ function renderizarMusica() {
         
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = '❌';
-        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, "musica", item.id)); };
+        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, `usuarios/${currentUserUid}/musica`, item.id)); };
         li.appendChild(btnEliminar);
         listaMusica.appendChild(li);
     });
@@ -444,11 +481,10 @@ if (document.getElementById('btn-abrir-form-musica')) {
         const titulo = inputTituloMusica.value.trim();
         const artista = inputArtistaMusica.value.trim();
         if (titulo !== '' && artista !== '') {
-            // Guardamos el campo 'imagen'
             const datosMusica = { titulo: titulo, artista: artista, imagen: inputImagenMusica.value.trim(), fecha: inputFechaMusica.value, nota: inputNotaMusica.value };
             try {
-                if (idEdicionMusica) { await updateDoc(doc(db, "musica", idEdicionMusica), datosMusica); } 
-                else { await addDoc(collection(db, "musica"), datosMusica); }
+                if (idEdicionMusica) { await updateDoc(doc(db, `usuarios/${currentUserUid}/musica`, idEdicionMusica), datosMusica); } 
+                else { await addDoc(collection(db, `usuarios/${currentUserUid}/musica`), datosMusica); }
                 cerrarModalMusica();
             } catch (e) { console.error(e); }
         } else { alert('¡El título y el artista son obligatorios!'); }
