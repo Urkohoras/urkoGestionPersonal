@@ -358,13 +358,23 @@ const inputRef = document.getElementById('ref-tarea');
 let idEdicionTarea = null;
 
 function cerrarModalTarea() { 
-    modalTarea.classList.remove('mostrar-modal'); 
-    inputNombre.value = ''; 
-    inputFecha.value = ''; 
-    inputRef.value = ''; 
-    inputTipo.value = 'Deberes'; 
+    if(modalTarea) modalTarea.classList.remove('mostrar-modal'); 
+    if(inputNombre) inputNombre.value = ''; 
+    
+    // Reseteamos el input de fecha a su estado normal
+    if(inputFecha) {
+        inputFecha.value = ''; 
+        inputFecha.readOnly = false; 
+        inputFecha.style.pointerEvents = 'auto';
+        inputFecha.style.opacity = '1';
+    }
+    
+    if(inputRef) inputRef.value = ''; 
+    if(inputTipo) inputTipo.value = 'Deberes'; 
     idEdicionTarea = null; 
-    document.querySelector('#modal-tarea h3').textContent = 'Nueva Tarea'; 
+    
+    const h3 = document.querySelector('#modal-tarea h3');
+    if(h3) h3.textContent = 'Nueva Tarea'; 
 }
 
 // Lógica para mostrar/ocultar el panel de tareas completadas
@@ -480,6 +490,22 @@ if (document.getElementById('btn-abrir-formulario')) {
                 cerrarModalTarea();
             } catch (e) { console.error(e); }
         } else { alert('¡El nombre no puede estar vacío!'); }
+    });
+}
+
+const btnAbrirFormTareaCalendario = document.getElementById('btn-abrir-form-tarea-calendario');
+if (btnAbrirFormTareaCalendario) {
+    btnAbrirFormTareaCalendario.addEventListener('click', () => {
+        const h3 = document.querySelector('#modal-tarea h3');
+        if(h3) h3.textContent = 'Nueva Tarea';
+        
+        // Asignamos la fecha del calendario y la bloqueamos visual y funcionalmente
+        inputFecha.value = fechaSeleccionadaStr;
+        inputFecha.readOnly = true;
+        inputFecha.style.pointerEvents = 'none'; 
+        inputFecha.style.opacity = '0.5'; 
+        
+        modalTarea.classList.add('mostrar-modal');
     });
 }
 
