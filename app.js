@@ -493,6 +493,13 @@ if (document.getElementById('btn-abrir-formulario')) {
     });
 }
 
+// 1. Botón para abrir el formulario desde la página "tareas.html"
+const btnAbrirFormulario = document.getElementById('btn-abrir-formulario');
+if (btnAbrirFormulario) {
+    btnAbrirFormulario.addEventListener('click', () => modalTarea.classList.add('mostrar-modal'));
+}
+
+// 2. Botón para abrir el formulario desde el detalle del día en "index.html"
 const btnAbrirFormTareaCalendario = document.getElementById('btn-abrir-form-tarea-calendario');
 if (btnAbrirFormTareaCalendario) {
     btnAbrirFormTareaCalendario.addEventListener('click', () => {
@@ -500,12 +507,48 @@ if (btnAbrirFormTareaCalendario) {
         if(h3) h3.textContent = 'Nueva Tarea';
         
         // Asignamos la fecha del calendario y la bloqueamos visual y funcionalmente
-        inputFecha.value = fechaSeleccionadaStr;
-        inputFecha.readOnly = true;
-        inputFecha.style.pointerEvents = 'none'; 
-        inputFecha.style.opacity = '0.5'; 
+        if (inputFecha) {
+            inputFecha.value = fechaSeleccionadaStr;
+            inputFecha.readOnly = true;
+            inputFecha.style.pointerEvents = 'none';
+            inputFecha.style.opacity = '0.5';
+        }
         
-        modalTarea.classList.add('mostrar-modal');
+        if (modalTarea) modalTarea.classList.add('mostrar-modal');
+    });
+}
+
+// 3. Botones del modal de tareas (comunes a ambas páginas)
+const btnCancelarTarea = document.getElementById('btn-cancelar-tarea');
+if (btnCancelarTarea) {
+    btnCancelarTarea.addEventListener('click', cerrarModalTarea);
+}
+
+const btnGuardarTarea = document.getElementById('btn-guardar-tarea');
+if (btnGuardarTarea) {
+    btnGuardarTarea.addEventListener('click', async () => {
+        const nombre = inputNombre.value.trim();
+        if (nombre !== '') {
+            try {
+                if (idEdicionTarea) {
+                    await updateDoc(doc(db, `usuarios/${currentUserUid}/tareas`, idEdicionTarea), {
+                        nombre: nombre,
+                        tipo: inputTipo.value,
+                        fecha: inputFecha.value,
+                        referencia: inputRef.value.trim()
+                    });
+                } else {
+                    await addDoc(collection(db, `usuarios/${currentUserUid}/tareas`), {
+                        nombre: nombre,
+                        tipo: inputTipo.value,
+                        fecha: inputFecha.value,
+                        referencia: inputRef.value.trim(),
+                        completada: false
+                    });
+                }
+                cerrarModalTarea();
+            } catch (e) { console.error(e); }
+        } else { alert('¡El nombre no puede estar vacío!'); }
     });
 }
 
