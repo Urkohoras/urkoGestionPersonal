@@ -87,8 +87,14 @@ function iniciarBaseDeDatos() {
     onSnapshot(collection(db, `usuarios/${currentUserUid}/tareas`), (snapshot) => {
         tareas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         tareas.sort((a, b) => { if (!a.fecha) return 1; if (!b.fecha) return -1; return new Date(a.fecha) - new Date(b.fecha); });
+        
         if (typeof renderizarCalendario === 'function') renderizarCalendario();
         if (document.getElementById('lista-tareas')) renderizarTareas();
+        
+        // NUEVO: Refrescar la vista del modal si está abierto en ese momento
+        if (typeof actualizarVistaTareasDia === 'function' && document.getElementById('modal-detalle-dia') && document.getElementById('modal-detalle-dia').classList.contains('mostrar-modal')) {
+            actualizarVistaTareasDia();
+        }
     });
 
     onSnapshot(collection(db, `usuarios/${currentUserUid}/peliculas`), (snapshot) => {
@@ -189,28 +195,38 @@ function renderizarCalendario() {
     }
 }
 
-function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
-    if (!modalDetalleDia) return;
-    fechaSeleccionadaStr = fechaString; 
-    
-    tituloDetalleDia.textContent = `Detalle del Día: ${numeroDia} de ${nombreMes}, ${fechaActual.getFullYear()}`;
-    
+function actualizarVistaTareasDia() {
+    if (!listaTareasDia || !fechaSeleccionadaStr) return;
     listaTareasDia.innerHTML = '';
-    const tareasDelDia = tareas.filter(t => t.fecha === fechaString);
+    const tareasDelDia = tareas.filter(t => t.fecha === fechaSeleccionadaStr);
+    
     if (tareasDelDia.length > 0) {
         tareasDelDia.forEach(tarea => {
             const li = document.createElement('li');
             li.style.cursor = 'default'; li.style.margin = '5px 0'; li.style.padding = '8px 12px';
-            li.innerHTML = `<span class="titulo-tarea" style="font-size: 0.9rem;">${tarea.nombre}</span> <span class="etiqueta-tipo tipo-${tarea.tipo.toLowerCase()}">${tarea.tipo}</span>`;
+            
+            // Mantenemos la opacidad y tachado si la tarea está completada
+            if (tarea.completada) li.style.opacity = '0.6';
+            const estiloTitulo = tarea.completada ? 'text-decoration: line-through;' : '';
+            
+            li.innerHTML = `<span class="titulo-tarea" style="font-size: 0.9rem; ${estiloTitulo}">${tarea.nombre}</span> <span class="etiqueta-tipo tipo-${tarea.tipo.toLowerCase()}">${tarea.tipo}</span>`;
             listaTareasDia.appendChild(li);
         });
     } else {
         listaTareasDia.innerHTML = '<p style="color: #64748b; font-size: 0.9rem; text-align: center;">No hay tareas para hoy.</p>';
     }
-    
-    if (unsuscribeOrganizacion) unsuscribeOrganizacion(); 
+}
 
-    // Ruta actualizada a subcolección de usuario
+function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
+    if (!modalDetalleDia) return;
+    fechaSeleccionadaStr = fechaString;
+    
+    tituloDetalleDia.textContent = `Detalle del Día: ${numeroDia} de ${nombreMes}, ${fechaActual.getFullYear()}`;
+    
+    actualizarVistaTareasDia(); // Renderizamos las tareas
+    
+    if (unsuscribeOrganizacion) unsuscribeOrganizacion();
+
     const actividadesRef = collection(db, `usuarios/${currentUserUid}/organizacionesDiarias`, fechaSeleccionadaStr, "actividades");
     
     unsuscribeOrganizacion = onSnapshot(actividadesRef, (snapshot) => {
@@ -220,6 +236,37 @@ function abrirDetalleDia(fechaString, numeroDia, nombreMes) {
     });
 
     modalDetalleDia.classList.add('mostrar-modal');
+}
+
+// Lógica para añadir tarea directamente desde el día
+const inputNombreTareaDia = document.getElementById('nombre-tarea-dia');
+const inputTipoTareaDia = document.getElementById('tipo-tarea-dia');
+const btnAddTareaDia = document.getElementById('btn-add-tarea-dia');
+
+if (btnAddTareaDia) {
+    btnAddTareaDia.addEventListener('click', async () => {
+        const nombre = inputNombreTareaDia.value.trim();
+        const tipo = inputTipoTareaDia.value;
+
+        if (nombre && fechaSeleccionadaStr) {
+            const nuevaTarea = { 
+                nombre: nombre, 
+                tipo: tipo, 
+                fecha: fechaSeleccionadaStr, 
+                referencia: '', 
+                completada: false 
+            };
+            try {
+                await addDoc(collection(db, `usuarios/${currentUserUid}/tareas`), nuevaTarea);
+                inputNombreTareaDia.value = ''; // Limpiamos el input
+            } catch (e) { 
+                console.error(e); 
+                alert("Error al guardar la tarea."); 
+            }
+        } else { 
+            alert('¡El nombre de la tarea es obligatorio!'); 
+        }
+    });
 }
 
 function renderizarActividadesDia(actividades) {

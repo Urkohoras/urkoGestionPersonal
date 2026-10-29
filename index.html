@@ -53,6 +53,27 @@
                     <h4>Tareas del Día</h4>
                     <ul id="lista-tareas-dia" class="lista-tareas-calendario">
                         </ul>
+                        <div class="columna-detalle-dia">
+                            <h4>Tareas del Día</h4>
+                            <ul id="lista-tareas-dia" class="lista-tareas-calendario">
+                            </ul>
+                            <!-- NUEVO FORMULARIO PARA AÑADIR TAREAS DESDE EL CALENDARIO -->
+                            <div class="form-organizar-dia">
+                                <div class="fila-horas">
+                                    <select id="tipo-tarea-dia" style="flex: 1; padding: 10px 8px !important; font-size: 0.85rem !important; margin-bottom: 0;">
+                                        <option value="Deberes">Deberes</option>
+                                        <option value="Examen">Examen</option>
+                                        <option value="Trabajo">Trabajo</option>
+                                        <option value="Personal">Personal</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="fila-titulo">
+                                    <input type="text" id="nombre-tarea-dia" placeholder="Nueva tarea...">
+                                    <button id="btn-add-tarea-dia" class="btn-secundario">+</button>
+                                </div>
+                            </div>
+                        </div>
                 </div>
                 
                 <div class="columna-detalle-dia">
