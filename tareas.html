@@ -26,11 +26,23 @@
         <section id="tareas">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 style="margin-bottom: 0; border: none; padding: 0;">Lista de Tareas</h2>
-                <button id="btn-abrir-formulario" class="btn-principal"> + Añadir Tarea</button>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-ver-completadas" class="btn-secundario">Ver Completadas</button>
+                    <button id="btn-abrir-formulario" class="btn-principal"> + Añadir Tarea</button>
+                </div>
             </div>
             
             <ul id="lista-tareas">
+                <!-- Tareas pendientes -->
+            </ul>
+
+            <!-- Nuevo contenedor para tareas completadas -->
+            <div id="contenedor-completadas" class="oculto" style="margin-top: 30px; border-top: 1px solid #2c323d; padding-top: 20px;">
+                <h3 style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 15px; text-align: left;">Tareas Completadas</h3>
+                <ul id="lista-tareas-completadas" style="margin-top: 0;">
+                    <!-- Tareas completadas -->
                 </ul>
+            </div>
         </section>
     </main>
 

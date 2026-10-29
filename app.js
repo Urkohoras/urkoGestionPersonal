@@ -300,6 +300,9 @@ if (btnMesAnterior && btnMesSiguiente) {
 // 6. LÓGICA DE TAREAS (Rutas actualizadas)
 // ==========================================
 const listaTareas = document.getElementById('lista-tareas');
+const listaTareasCompletadas = document.getElementById('lista-tareas-completadas');
+const contenedorCompletadas = document.getElementById('contenedor-completadas');
+const btnVerCompletadas = document.getElementById('btn-ver-completadas');
 const modalTarea = document.getElementById('modal-tarea');
 const inputNombre = document.getElementById('nombre-tarea');
 const inputTipo = document.getElementById('tipo-tarea');
@@ -307,34 +310,99 @@ const inputFecha = document.getElementById('fecha-tarea');
 const inputRef = document.getElementById('ref-tarea');
 let idEdicionTarea = null;
 
-function cerrarModalTarea() { modalTarea.classList.remove('mostrar-modal'); inputNombre.value = ''; inputFecha.value = ''; inputRef.value = ''; inputTipo.value = 'Deberes'; idEdicionTarea = null; document.querySelector('#modal-tarea h3').textContent = 'Nueva Tarea'; }
+function cerrarModalTarea() { 
+    modalTarea.classList.remove('mostrar-modal'); 
+    inputNombre.value = ''; 
+    inputFecha.value = ''; 
+    inputRef.value = ''; 
+    inputTipo.value = 'Deberes'; 
+    idEdicionTarea = null; 
+    document.querySelector('#modal-tarea h3').textContent = 'Nueva Tarea'; 
+}
+
+// Lógica para mostrar/ocultar el panel de tareas completadas
+if (btnVerCompletadas) {
+    btnVerCompletadas.addEventListener('click', () => {
+        contenedorCompletadas.classList.toggle('oculto');
+        if (contenedorCompletadas.classList.contains('oculto')) {
+            btnVerCompletadas.textContent = 'Ver Completadas';
+        } else {
+            btnVerCompletadas.textContent = 'Ocultar Completadas';
+        }
+    });
+}
 
 function renderizarTareas() {
-    if (!listaTareas) return; listaTareas.innerHTML = '';
+    if (!listaTareas) return; 
+    listaTareas.innerHTML = '';
+    if (listaTareasCompletadas) listaTareasCompletadas.innerHTML = '';
+
     tareas.forEach((tarea) => {
+        const isCompletada = tarea.completada || false;
+        
         const li = document.createElement('li');
+        if (isCompletada) li.classList.add('tarea-completada');
+
         li.addEventListener('click', (e) => {
-            if(e.target.tagName === 'BUTTON') return;
+            // Evitamos abrir el modal si se clica el botón borrar o el checkbox
+            if(e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') return;
             idEdicionTarea = tarea.id;
             document.querySelector('#modal-tarea h3').textContent = 'Editar Tarea';
-            inputNombre.value = tarea.nombre; inputTipo.value = tarea.tipo || 'Otro'; inputFecha.value = tarea.fecha || ''; inputRef.value = tarea.referencia || '';
+            inputNombre.value = tarea.nombre; 
+            inputTipo.value = tarea.tipo || 'Otro'; 
+            inputFecha.value = tarea.fecha || ''; 
+            inputRef.value = tarea.referencia || '';
             modalTarea.classList.add('mostrar-modal');
         });
+
+        // Contenedor izquierdo para agrupar checkbox y textos
+        const contenedorIzquierdo = document.createElement('div');
+        contenedorIzquierdo.style.display = 'flex';
+        contenedorIzquierdo.style.alignItems = 'center';
+        contenedorIzquierdo.style.gap = '15px';
+
+        // Checkbox de estado (reutilizamos tu clase .organizacion-checkbox del CSS)
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = isCompletada;
+        checkbox.classList.add('organizacion-checkbox');
+        checkbox.addEventListener('change', async (e) => {
+            e.stopPropagation();
+            await updateDoc(doc(db, `usuarios/${currentUserUid}/tareas`, tarea.id), { 
+                completada: checkbox.checked 
+            });
+        });
+
+        // Textos de la tarea
         const infoDiv = document.createElement('div');
         infoDiv.classList.add('info-tarea');
         infoDiv.innerHTML = `<span class="titulo-tarea">${tarea.nombre}</span>`;
+        
         const detallesDiv = document.createElement('div');
         detallesDiv.classList.add('detalles-tarea');
         if (tarea.tipo) detallesDiv.innerHTML += `<span class="etiqueta-tipo tipo-${tarea.tipo.toLowerCase()}">${tarea.tipo}</span>`;
         if (tarea.fecha) detallesDiv.innerHTML += `<span>📅 ${new Date(tarea.fecha).toLocaleDateString('es-ES')}</span>`;
         if (tarea.referencia) detallesDiv.innerHTML += `<span>🏷️ ${tarea.referencia}</span>`;
+        
         infoDiv.appendChild(detallesDiv);
-        li.appendChild(infoDiv);
+        contenedorIzquierdo.appendChild(checkbox);
+        contenedorIzquierdo.appendChild(infoDiv);
+        li.appendChild(contenedorIzquierdo);
+        
         const btnEliminar = document.createElement('button');
         btnEliminar.textContent = '❌';
-        btnEliminar.onclick = async (e) => { e.stopPropagation(); await deleteDoc(doc(db, `usuarios/${currentUserUid}/tareas`, tarea.id)); };
+        btnEliminar.onclick = async (e) => { 
+            e.stopPropagation(); 
+            await deleteDoc(doc(db, `usuarios/${currentUserUid}/tareas`, tarea.id)); 
+        };
         li.appendChild(btnEliminar);
-        listaTareas.appendChild(li);
+
+        // Derivar a la lista correspondiente
+        if (isCompletada && listaTareasCompletadas) {
+            listaTareasCompletadas.appendChild(li);
+        } else {
+            listaTareas.appendChild(li);
+        }
     });
 }
 
@@ -344,10 +412,24 @@ if (document.getElementById('btn-abrir-formulario')) {
     document.getElementById('btn-guardar-tarea').addEventListener('click', async () => {
         const nombre = inputNombre.value.trim();
         if (nombre !== '') {
-            const datosTarea = { nombre: nombre, tipo: inputTipo.value, fecha: inputFecha.value, referencia: inputRef.value.trim() };
             try {
-                if (idEdicionTarea) { await updateDoc(doc(db, `usuarios/${currentUserUid}/tareas`, idEdicionTarea), datosTarea); } 
-                else { await addDoc(collection(db, `usuarios/${currentUserUid}/tareas`), datosTarea); }
+                if (idEdicionTarea) { 
+                    await updateDoc(doc(db, `usuarios/${currentUserUid}/tareas`, idEdicionTarea), {
+                        nombre: nombre, 
+                        tipo: inputTipo.value, 
+                        fecha: inputFecha.value, 
+                        referencia: inputRef.value.trim()
+                        // No alteramos "completada" al editar para mantener su estado
+                    }); 
+                } else { 
+                    await addDoc(collection(db, `usuarios/${currentUserUid}/tareas`), {
+                        nombre: nombre, 
+                        tipo: inputTipo.value, 
+                        fecha: inputFecha.value, 
+                        referencia: inputRef.value.trim(),
+                        completada: false // Nueva propiedad por defecto
+                    }); 
+                }
                 cerrarModalTarea();
             } catch (e) { console.error(e); }
         } else { alert('¡El nombre no puede estar vacío!'); }

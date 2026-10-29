@@ -184,3 +184,18 @@ li button:hover { background-color: rgba(239, 68, 68, 0.1); border-color: #ef444
 .fila-titulo { display: flex; gap: 8px; }
 .fila-titulo input[type="text"] { flex: 1; }
 .fila-titulo button { width: 45px; padding: 0 !important; font-size: 1.3rem !important; font-weight: bold; }
+
+/* =========================================
+   9. UTILIDADES Y ESTADOS ADICIONALES
+   ========================================= */
+.oculto {
+    display: none !important;
+}
+
+.tarea-completada {
+    opacity: 0.6;
+}
+
+.tarea-completada .titulo-tarea {
+    text-decoration: line-through;
+}
